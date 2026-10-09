@@ -1,0 +1,21 @@
+Miselyum ses paketi (telifsiz; hepsi tanitim/ses_uret.py ile bilgisayarda üretildi)
+
+  odak-muzigi.mp3  8 dakika, 92 BPM, hafif ritimli odak müziği (-22 LUFS: konuşmanın altında kalır)
+  acilis.wav       yükselen akor, 4 sn      → kapak slaydı
+  gecis.wav        yumuşak "vuuş", 0,7 sn   → bölüm başı slaytların geçişi
+  tik.wav          kısa tık, 0,05 sn        → tıklayınca açılan öğeler
+  vurgu.wav        cam çan, 1,4 sn          → büyük sayının ya da sonucun açıldığı an
+  kapanis.wav      çözülen akor, 3,5 sn     → teşekkür slaydı
+
+Sunum web sürümünde ses çalmaz; sesli sunum için desteyi PowerPoint olarak indirin (sunumda Dışa aktar › PowerPoint).
+
+PowerPoint'te
+1. Fon müziği: kapak slaydında Ekle › Ses › Bilgisayarımdaki Ses › odak-muzigi.mp3. Ses Biçimi sekmesinde
+   "Arka Planda Yürüt"e basın (slaytlar arasında çalar, döngüye girer, simge gizlenir). Ses düzeyini "Düşük" yapın.
+2. Geçiş sesi: bölüm başı slaytları seçin › Geçişler › Ses › Diğer Ses… › gecis.wav. Süre 0,7 sn uygundur.
+   Her slaytta ses kullanmayın; yalnız bölüm başlarında kullanmak daha profesyonel durur.
+3. Tıklama sesi: Animasyonlar › bir öğe seçin › Efekt Seçenekleri (küçük ok) › Gelişmiş › Ses › Diğer Ses… › tik.wav.
+4. Kapak için acilis.wav, son slayt için kapanis.wav: geçiş sesi olarak ekleyin.
+
+Öneri: konuşurken müziği tamamen kapatmak isterseniz sunum sırasında ses simgesinin duraklat düğmesini kullanın;
+müzik hafif kaldığı için çoğu salonda açık bırakılabilir.

@@ -1,0 +1,5 @@
+# Miselyum Kapısı için Python paketleri (Python 3.11 ve üstü)
+aiohttp>=3.9
+websockets>=13
+ocpp>=1.0
+cryptography>=42

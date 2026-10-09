@@ -1,0 +1,30 @@
+# Gizli ve makineye özel veriler: depoya asla girmez (Kapı ilk açılışta yeniden üretir)
+kapi/veri/
+*.db
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+
+# Büyük ve yeniden üretilebilen medya (tanitim/kayit.py ile üretilir)
+tanitim/*.mp4
+tanitim/ses/
+tanitim/ses-ornekleri/
+tanitim/eski-ekranlar/
+tanitim/ses-paketi/*.wav
+tanitim/ses-paketi/*.mp3
+tanitim/ses-secimi.json
+
+# İndirilen müzik ve efektler (lisansları her parçanın kendi sayfasında)
+tanitim/muzik/*
+!tanitim/muzik/BENI-OKU.txt
+!tanitim/muzik/sfx/
+tanitim/muzik/sfx/*
+
+# Editör ve işletim sistemi
+.claude/
+.vscode/
+Thumbs.db
+desktop.ini

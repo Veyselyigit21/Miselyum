@@ -1,0 +1,19 @@
+Miselyum tanıtım videosu · bölümler
+
+0:00  Açılış
+0:47  1 · Giriş
+2:01  2 · Ağ ve sorun
+3:15  3 · Canlı saha
+4:47  4 · İki yönlü ikiz
+7:48  5 · Tesis
+8:26  6 · Riskler
+9:06  7 · Önlemler
+10:22  8 · Senaryolar
+11:55  9 · Güvenlik
+14:35  10 · İkinci şirket
+16:00  11 · Asistan
+16:32  12 · Belgeler ve gelecek
+17:22  Kapanış
+
+Toplam süre: 17:42
+Seslendirme: tr-TR-EmelNeural · müzik: tanitim/muzik/ (yoksa ses_uret.py)

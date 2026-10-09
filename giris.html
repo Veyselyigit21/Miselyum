@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Giriş · Miselyum</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1' y='1' width='30' height='30' rx='9' fill='%23c8f031'/%3E%3Cpath d='M16 17.5V25.5M16 17.5 9 12.5M16 17.5l7-5.5M16 17.5l8.5 3M9 12.5 7.5 7M9 12.5l-3.5 2.5M23 12l-1-5M16 25.5l-5 1.5M16 25.5l5 1.5' fill='none' stroke='%23111210' stroke-width='2.1' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='17.5' r='3.1' fill='%23111210'/%3E%3C/svg%3E">
+<meta name="description" content="Miselyum Kapısı: Miselyum paneline güvenli giriş">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/giris.css">
+</head>
+<body>
+<main class="g">
+  <section class="g-sol" aria-label="Miselyum">
+    <div class="g-marka">
+      <svg class="g-isaret" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="9" fill="#c8f031"/><path d="M16 17.5V25.5M16 17.5 9 12.5M16 17.5l7-5.5M16 17.5l8.5 3M9 12.5 7.5 7M9 12.5l-3.5 2.5M23 12l-1-5M16 25.5l-5 1.5M16 25.5l5 1.5" fill="none" stroke="#111210" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="17.5" r="3.1" fill="#111210"/></svg>
+      <div><b>Miselyum</b><span>BGYS dijital ikiz ağı</span></div>
+    </div>
+
+    <svg class="g-ag" viewBox="0 0 520 300" aria-hidden="true">
+      <g class="g-hif">
+        <path d="M260 150C220 120 170 110 110 70M260 150C300 118 352 104 410 62M260 150C224 182 176 204 116 236M260 150C300 184 350 204 404 240M260 150V40M260 150V266"/>
+        <path d="M110 70 70 40M110 70 62 96M410 62l44-26M410 62l50 30M116 236l-46 18M116 236l-30-38M404 240l50 16M404 240l34-40M260 40l-30-22M260 40l30-22"/>
+      </g>
+      <g class="g-dugum">
+        <circle cx="260" cy="150" r="13" class="g-cekirdek"/>
+        <circle cx="110" cy="70" r="7"/><circle cx="410" cy="62" r="7"/><circle cx="116" cy="236" r="7"/><circle cx="404" cy="240" r="7"/>
+        <circle cx="260" cy="40" r="5"/><circle cx="260" cy="266" r="5"/>
+        <circle cx="70" cy="40" r="3.5"/><circle cx="62" cy="96" r="3.5"/><circle cx="454" cy="36" r="3.5"/><circle cx="460" cy="92" r="3.5"/>
+        <circle cx="70" cy="254" r="3.5"/><circle cx="86" cy="198" r="3.5"/><circle cx="454" cy="256" r="3.5"/><circle cx="438" cy="200" r="3.5"/>
+        <circle cx="230" cy="18" r="3"/><circle cx="290" cy="18" r="3"/>
+      </g>
+      <g class="g-etiket">
+        <text x="96" y="58" text-anchor="end">Akımyolu</text>
+        <text x="424" y="50">Kıvılcım</text>
+        <text x="100" y="262" text-anchor="end">yeni şirket</text>
+        <text x="420" y="270">yeni şirket</text>
+      </g>
+    </svg>
+
+    <h1>Şirketlerin dağınık sistemlerini tek bir risk ağına bağlar.</h1>
+    <p class="g-oz">Miselyum, mantarın toprak altındaki ağı gibi çalışır: her şirketin cihazlarından ve yazılımlarından gelen sinyali toplar, ISO/IEC 27001 risk haritasını besler.</p>
+
+    <ul class="g-koruma" aria-label="Bu girişin korumaları">
+      <li><b>Parola</b> scrypt ile tuzlanmış özet, sabit süreli karşılaştırma</li>
+      <li><b>İki adımlı doğrulama</b> RFC 6238 zaman tabanlı kod, tekrar kullanılamaz</li>
+      <li><b>Oturum</b> yalnız sunucuda; 15 dk boşta, 8 sa mutlak süre, en fazla 2 cihaz</li>
+      <li><b>Kaba kuvvet</b> IP başına dakikada 5 deneme, 5 hatada hesap kilidi</li>
+      <li><b>WAF</b> SQL enjeksiyonu, XSS, SSRF ve yol geçişi kuralları</li>
+    </ul>
+  </section>
+
+  <section class="g-sag">
+    <div class="g-kart">
+      <form id="adim-parola" class="g-form" autocomplete="on" novalidate>
+        <div class="g-ust">
+          <span class="g-rozet">Miselyum Kapısı</span>
+          <h2>Panele giriş</h2>
+          <p>Rolünüz hangi şirketleri görebileceğinizi ve neyi değiştirebileceğinizi belirler.</p>
+        </div>
+        <label class="g-alan">
+          <span>Kullanıcı adı</span>
+          <input id="kullanici" name="username" autocomplete="username" spellcheck="false" autocapitalize="none" maxlength="40" required>
+        </label>
+        <label class="g-alan">
+          <span>Parola</span>
+          <span class="g-parola">
+            <input id="parola" name="password" type="password" autocomplete="current-password" maxlength="200" required>
+            <button type="button" id="goster" class="g-goster" aria-pressed="false" aria-label="Parolayı göster">Göster</button>
+          </span>
+        </label>
+        <p id="ileti" class="g-ileti" role="alert" hidden></p>
+        <button type="submit" class="g-dugme" id="gonder">Giriş yap</button>
+      </form>
+
+      <form id="adim-kod" class="g-form" autocomplete="off" novalidate hidden>
+        <div class="g-ust">
+          <span class="g-rozet">İkinci adım</span>
+          <h2>Doğrulama kodu</h2>
+          <p>Kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin. Kod 30 saniyede bir değişir.</p>
+        </div>
+        <label class="g-alan">
+          <span>Kod</span>
+          <input id="kod" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" class="g-kod" required>
+        </label>
+        <p id="ileti-kod" class="g-ileti" role="alert" hidden></p>
+        <button type="submit" class="g-dugme" id="dogrula">Doğrula ve gir</button>
+        <button type="button" class="g-geri" id="geri">Başka hesapla gir</button>
+      </form>
+
+      <div class="g-not">
+        <p><b>Demo hesapları</b> bu bilgisayarda <code>kapi/veri/demo-hesaplar.txt</code> dosyasındadır: yönetici, analist (yalnız Akımyolu) ve izleyici (salt okunur). Yöneticinin doğrulama kodu için <code>python kapi/totp.py</code></p>
+      </div>
+    </div>
+    <p class="g-alt">Oturum çerezi <code>__Host-</code> önekli, HttpOnly, SameSite=Strict · Her deneme denetim kaydına yazılır · Kapı olmadan denemek için <code>baslat.html</code> dosyasını doğrudan açın (simülasyon)</p>
+  </section>
+</main>
+<script src="js/giris.js"></script>
+</body>
+</html>

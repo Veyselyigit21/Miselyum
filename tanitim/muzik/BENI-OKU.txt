@@ -1,0 +1,31 @@
+MİSELYUM · MÜZİK VE EFEKT KLASÖRÜ
+
+Bu klasöre koyduğun parçalar videoda bölüm bölüm kullanılır ve sunumun ses paketine dönüştürülür.
+Dosyayı aşağıdaki adla kaydet (uzantı mp3, wav, ogg ya da m4a olabilir). Eksik olan rol için en yakın rol kullanılır;
+en az "acilis", "enerjik", "karanlik" ve "final" olursa video iyi olur.
+
+Önerilen kaynak: Pixabay Music ve Pixabay Sound Effects (pixabay.com/music, pixabay.com/sound-effects).
+Pixabay İçerik Lisansı: ücretsiz, atıf zorunlu değil; ders projesi ve sunum için uygun. Yine de indirdiğin sayfaların
+bağlantısını KAYNAKLAR.txt dosyasına yazman iyi olur.
+
+MÜZİK (her biri en az 1,5–2 dakika olsun; kısa olanı ben döngüye alırım)
+  Dosya adı      Hangi bölüm                         Duygu ve tempo                  Pixabay'de aranacak (İngilizce)
+  acilis         Açılış, adın hikâyesi, Kapanış      sinematik, yavaş açılan, 70–90  cinematic intro, epic technology intro
+  gizem          Giriş ekranı                        sakin, merak uyandıran          mysterious ambient, minimal suspense
+  gerilim        Ağ ve sorun                         hafif gerilim, nabız            tension pulse, suspense technology
+  enerjik        Canlı saha, Tesis, İkinci şirket    canlı, teknolojik, 110–125      upbeat technology, future tech corporate
+  odak           Riskler, Önlemler, Asistan          sade, odak, konuşmayı ezmeyen   corporate technology background, minimal tech
+  karanlik       Olay senaryoları (saldırı)          karanlık siber gerilim          dark cyber, hacker, cyberpunk tension
+  surukleyici    İki yönlü ikiz, Güvenlik merkezi    hızlı, sürükleyici, 120–130     driving electronic, action technology
+  final          Belgeler, gelecek ve kapanış        yükselen, umut veren            inspiring uplifting corporate, epic inspirational
+
+EFEKTLER (sfx klasörüne)
+  sfx/gecis      bölüm kartında vuuş                 whoosh transition
+  sfx/yukselis   karttan hemen önce, 2–4 sn          cinematic riser
+  sfx/vurus      kartın başlığı açılırken            cinematic impact, boom hit
+  sfx/tik        imleç tıklamaları (çok kısa)        ui click, soft click
+  sfx/glitch     saldırı başlarken                   glitch, digital error
+  sfx/basari     MFA saldırıyı durdurunca, testler   success notification, positive chime
+
+Parçalar hazır olunca: python tanitim/kayit.py --miksaj   (videoyu yeniden kaydetmeden yalnız sesi kurar)
+Sunum ses paketi için:  python tanitim/ses_paketi_kur.py
