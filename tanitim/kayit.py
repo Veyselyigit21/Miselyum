@@ -212,6 +212,8 @@ OVERLAY = r"""
   #rec-card{position:fixed;inset:0;z-index:2147483001;display:flex;flex-direction:column;justify-content:center;padding:0 9vw;background:#111210;color:#f3f4ef;
     opacity:0;transition:opacity .5s;pointer-events:none;font-family:Archivo,"Segoe UI",sans-serif}
   #rec-card.on{opacity:1}
+  #rec-card > :not(.net){animation:recin .45s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes recin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   #rec-card .logo{position:absolute;left:9vw;top:8vh;display:flex;align-items:center;gap:12px;font:700 24px Archivo,sans-serif}
   #rec-card .logo svg{width:38px;height:38px}
   #rec-card .ck{display:flex;align-items:center;gap:12px;font:600 19px/1 Archivo,sans-serif;color:#c8f031;margin-bottom:24px}
@@ -542,7 +544,7 @@ class Film:
             self.placements.append((self.rec.now() + 0.2, clip[0], text, self.k))
         await self.wait(secs)
 
-    async def card(self, title, sub=None, kicker=None, n=None, total=None, items=None, cols=None, secs=5.0, during=None, say=None, net=False):
+    async def card(self, title, sub=None, kicker=None, n=None, total=None, items=None, cols=None, secs=5.0, during=None, say=None, net=False, devam=False):
         clip = self.voice.get(say) if say else None
         if clip:
             secs = max(secs, clip[1] + 1.6)
@@ -558,6 +560,8 @@ class Film:
         if during:
             await during()
         await self.wait(max(0.5, secs - (time.time() - t)))
+        if devam:
+            return
         await self.js('__rec.cardOff()')
         await self.wait(0.6)
 
@@ -720,15 +724,15 @@ async def film(f: Film, d: dict, dk: dict):
     f.rec.mark('Açılış')
     await f.card('Şirketlerin dağınık sistemlerini <em>tek bir risk ağına</em> bağlıyoruz.',
                  'Miselyum: ISO/IEC 27001 odaklı bilgi güvenliği dijital ikiz ağı. Örnek şirketler kurgusaldır: Akımyolu (şarj ağı) ve Kıvılcım Otomotiv (elektrikli otomobil üretimi).',
-                 kicker='BGYS dijital ikiz ağı', secs=8, net=True,
+                 kicker='BGYS dijital ikiz ağı', secs=8, net=True, devam=True,
                  say='Miselyum. Şirketlerin dağınık yazılımlarını ve cihazlarını tek bir risk ağına bağlayan, ISO 27001 odaklı bir bilgi güvenliği dijital ikiz ağı.')
     await f.card('Neden <em>Miselyum</em>?',
                  'Miselyum, mantarın toprak altındaki lif ağıdır: ağaçları birbirine bağlar, aralarında su, besin ve tehlike sinyali taşır. Toprağın üstünde gördüğümüz mantar, ağın yalnız küçük bir parçasıdır.',
                  kicker='Adın hikâyesi', items=['Hif ajanları: cihazların dilini konuşur', 'Miselyum ağı: şifreli olay akışı', 'Çekirdek: Kapı, ikiz ve risk motoru',
                                                'Mantar: panel, ağın görünen yüzü', 'Şirket paketi: her sektöre uyar', 'Kanıt: canlı cihaz ve saldırı testleri'],
-                 secs=14, net=True,
+                 secs=14, net=True, devam=True,
                  say='Neden Miselyum? Miselyum, mantarın toprak altındaki lif ağıdır. Ağaçları birbirine bağlar, aralarında su, besin ve tehlike sinyali taşır. Biz de şirketlerin birbirinden kopuk sistemlerini dipten bağlayıp risk haritasını canlı veriyle besliyoruz. Toprağın üstünde gördüğünüz panel, bu ağın yalnız görünen yüzü.')
-    await f.card('On iki bölümde bütün proje', kicker='Bu videoda', items=CHAPTERS, secs=7,
+    await f.card('On iki bölümde bütün proje', kicker='Bu videoda', items=CHAPTERS, secs=7, devam=True,
                  say='Bu videoda projeyi on iki bölümde, giriş ekranından başlayarak gösteriyoruz.')
 
     # ---- 1. Giriş ----
@@ -1002,7 +1006,7 @@ async def film(f: Film, d: dict, dk: dict):
     # ---- 12. Belgeler ve gelecek ----
     f.k = '12 · ' + CHAPTERS[11]
     f.rec.mark(f.k)
-    await f.card('Yazılı belgeler: politika ve risk raporu', kicker=CHAPTERS[11], n=12, total=len(CHAPTERS), secs=11,
+    await f.card('Yazılı belgeler: politika ve risk raporu', kicker=CHAPTERS[11], n=12, total=len(CHAPTERS), secs=11, devam=True,
                  say=f"On ikinci bölüm: belgeler ve gelecek. BGYS politikası ISO 27001'in yapısını izliyor. Risk analizi raporunda {d['risks']} risk, {d['controls']} önlem, {d['scenarios']} senaryo ve 93 kontrollük uygulanabilirlik bildirgesi var.",
                  cols=[
         {'title': 'BGYS Politikası', 'sub': 'ISO/IEC 27001:2022 · 15 bölüm',
@@ -1122,6 +1126,8 @@ async def main():
                 asyncio.ensure_future(cdp.send('Page.screencastFrameAck', {'sessionId': params['sessionId']}))
 
             cdp.on('Page.screencastFrame', on_frame)
+            await page.evaluate("document.getElementById('rec-card').classList.add('on'); document.documentElement.classList.add('rec-card-on')")
+            await page.wait_for_timeout(700)
             await cdp.send('Page.startScreencast', {'format': 'jpeg', 'quality': 92, 'maxWidth': round(W * DPR), 'maxHeight': round(H * DPR)})
             await page.wait_for_timeout(500)
             f = Film(page, rec, voice, kapi)
