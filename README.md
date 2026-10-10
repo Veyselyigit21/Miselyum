@@ -30,9 +30,7 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 <video src="https://github.com/Veyselyigit21/Miselyum/raw/main/tanitim/Miselyum-tanitim.mp4" controls width="100%"></video>
 
-`python tanitim/kayit.py` videoyu uygulamanın kendisinden kaydeder (Playwright, Edge). Seslendirme ve müzik ayrıntıları `tanitim/muzik/BENI-OKU.txt` ve `tanitim/kayit.py` başındaki açıklamada.
-
-Müzik: Kevin MacLeod (incompetech.com) · CC BY 4.0. Seslendirme: ElevenLabs. Detaylar `tanitim/muzik/KAYNAKLAR.txt` dosyasında.
+Panelin ekranlarını, dijital ikizi, risk motorunu ve saldırı testlerini 4 dakikada gösteren sesli tanıtım.
 
 ## Kaynaklar
 
