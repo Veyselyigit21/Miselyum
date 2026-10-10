@@ -30,7 +30,7 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 > 17 dakikada Miselyum'un tüm ekranları: canlı şarj ağı, iki yönlü dijital ikiz, risk motoru, saldırı senaryoları, güvenlik kapısı ve daha fazlası.
 
-[▶ Videoyu izle (tanitim/Miselyum-tanitim.mp4)](tanitim/Miselyum-tanitim.mp4)
+<video src="https://files.catbox.moe/5uhkew.mp4" controls width="100%"></video>
 
 <p>
   <img src="tanitim/ekranlar/04-genel-bakis.png" width="24%" />
