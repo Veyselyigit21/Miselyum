@@ -28,7 +28,11 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 ## Tanıtım videosu
 
-`python tanitim/kayit.py` videoyu uygulamanın kendisinden kaydeder (Playwright, Edge). Seslendirme ve müzik ayrıntıları `tanitim/muzik/BENI-OKU.txt` ve `tanitim/kayit.py` başındaki açıklamada. Video dosyaları ve ses önbelleği depoya girmez.
+[`tanitim/Miselyum-tanitim.mp4`](tanitim/Miselyum-tanitim.mp4)
+
+`python tanitim/kayit.py` videoyu uygulamanın kendisinden kaydeder (Playwright, Edge). Seslendirme ve müzik ayrıntıları `tanitim/muzik/BENI-OKU.txt` ve `tanitim/kayit.py` başındaki açıklamada.
+
+Müzik: Kevin MacLeod (incompetech.com) · CC BY 4.0. Seslendirme: ElevenLabs. Detaylar `tanitim/muzik/KAYNAKLAR.txt` dosyasında.
 
 ## Kaynaklar
 

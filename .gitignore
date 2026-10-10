@@ -10,6 +10,7 @@ __pycache__/
 
 # Büyük ve yeniden üretilebilen medya (tanitim/kayit.py ile üretilir)
 tanitim/*.mp4
+!tanitim/Miselyum-tanitim.mp4
 tanitim/ses/
 tanitim/ses-ornekleri/
 tanitim/eski-ekranlar/
