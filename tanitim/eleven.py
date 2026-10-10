@@ -15,7 +15,7 @@ import urllib.request
 API = 'https://api.elevenlabs.io/v1'
 ANAHTAR_DOSYASI = os.path.join(os.path.expanduser('~'), '.miselyum', 'elevenlabs-anahtar.txt')
 SECIM = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ses-secimi.json')
-VARSAYILAN_MODEL = 'eleven_multilingual_v2'
+VARSAYILAN_MODEL = 'eleven_flash_v2_5'   # 0,5 kredi/karakter (multilingual_v2: 1 kredi/karakter)
 
 
 class AnahtarYok(RuntimeError):

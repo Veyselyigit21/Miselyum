@@ -32,6 +32,8 @@ ROL = {'Açılış': 'acilis', 'Giriş': 'gizem', 'Ağ ve sorun': 'gerilim', 'Ca
 YEDEK = {'acilis': ['final', 'gizem', 'odak'], 'gizem': ['odak', 'acilis'], 'gerilim': ['karanlik', 'gizem', 'odak'],
          'enerjik': ['surukleyici', 'odak'], 'odak': ['gizem', 'enerjik'], 'karanlik': ['gerilim', 'surukleyici', 'odak'],
          'surukleyici': ['enerjik', 'karanlik', 'odak'], 'final': ['acilis', 'enerjik', 'odak']}
+# Role göre müzik düzeyi (dB): parlak ya da hareketli parçalar konuşmanın altında biraz daha kısık tutulur
+DUZEY_DB = {'gizem': -3, 'surukleyici': -3, 'final': -2}
 # Efekt düzeyleri (tepe değere göre, dB)
 SFX_DB = {'gecis': -9, 'yukselis': -11, 'vurus': -7, 'tik': -20, 'glitch': -13, 'basari': -12}
 
@@ -91,7 +93,7 @@ def kurgu(marks, olaylar, total, ffmpeg, muzik_yolu, sfx_yolu):
     for r in set(ROL.values()):
         y = dosya(r)
         if y:
-            mevcut[r] = coz(y, ffmpeg)
+            mevcut[r] = coz(y, ffmpeg) * (10 ** (DUZEY_DB.get(r, 0) / 20))
     if not mevcut:
         return False
     n = int((total + 2) * SR)

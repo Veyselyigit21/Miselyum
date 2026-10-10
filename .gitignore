@@ -28,3 +28,5 @@ tanitim/muzik/sfx/*
 .vscode/
 Thumbs.db
 desktop.ini
+
+!tanitim/muzik/KAYNAKLAR.txt

@@ -38,7 +38,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'tanitim')
 sys.path.insert(0, OUT)
 sys.path.insert(0, os.path.join(ROOT, 'kapi'))
-from ses_uret import odak_muzigi  # noqa: E402
 from guvenlik import Totp  # noqa: E402
 import eleven  # noqa: E402
 import kurgu  # noqa: E402
@@ -50,7 +49,7 @@ SILENT = os.path.join(OUT, 'Miselyum-tanitim-sessiz.mp4')
 VOICE_DIR = os.path.join(OUT, 'ses')
 VOICES = {'emel': 'tr-TR-EmelNeural', 'ahmet': 'tr-TR-AhmetNeural'}
 SECIM = eleven.secim()   # tanitim/ses-secimi.json: ElevenLabs anlatıcısı (eleven_ornek.py --sec ile)
-SES = os.environ.get('SK_SES', 'eleven' if SECIM else 'emel').lower()
+SES = os.environ.get('SK_SES', 'emel').lower()   # ElevenLabs kredi harcar: yalnız SK_SES=eleven ya da --eleven-ses ile
 SESLI = SES in VOICES or SES == 'eleven'
 KURGU = os.path.join(VOICE_DIR, '_kurgu.json')   # sonradan yalnız müziği yeniden kurgulamak için
 KURGU_ELEVEN = os.path.join(VOICE_DIR, '_kurgu-eleven.json')   # aynı kayıt, ElevenLabs sesiyle (--eleven-ses)
@@ -319,15 +318,41 @@ FACTS = r"""
 SIRA = {'1': 'birinci', '2': 'ikinci', '3': 'üçüncü', '4': 'dördüncü', '5': 'beşinci'}
 
 
+BIRLER = ['', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz']
+ONLAR = ['', 'on', 'yirmi', 'otuz', 'kırk', 'elli', 'altmış', 'yetmiş', 'seksen', 'doksan']
+
+
+def sayi_oku(n):
+    """Tam sayıyı Türkçe yazıyla verir: 27001 → yirmi yedi bin bir."""
+    def uc(k):   # 1–999
+        y, k = divmod(k, 100)
+        o, b = divmod(k, 10)
+        return ' '.join(x for x in (('yüz' if y == 1 else BIRLER[y] + ' yüz') if y else '', ONLAR[o], BIRLER[b]) if x)
+    if n == 0:
+        return 'sıfır'
+    parca = []
+    for deger, ad in ((10 ** 9, 'milyar'), (10 ** 6, 'milyon'), (1000, 'bin')):
+        k, n = divmod(n, deger)
+        if k:
+            parca.append(ad if deger == 1000 and k == 1 else uc(k) + ' ' + ad)
+    if n:
+        parca.append(uc(n))
+    return ' '.join(parca)
+
+
 def konusma(t):
-    """Altyazıyı okunacak metne çevirir: kısaltmalar, para birimi, yüzde ve sıra sayıları."""
+    """Altyazıyı okunacak metne çevirir. Seslendirme motoru yalnız harf, virgül, nokta ve soru işareti görür:
+    kısaltmalar Türkçe okunuşuyla, sayılar yazıyla yazılır; iki nokta, noktalı virgül, kesme ve tire kaldırılır."""
     s = t
     for a, b in [('OpenStreetMap', 'Open Street Map'), ('OpenRouter', 'Open Router'), ('ISO/IEC ', 'ISO '), ('ISO/SAE ', 'ISO SAE '),
+                 ('UNECE R155, UNECE R156', 'Birleşmiş Milletler R155 ve R156 düzenlemeleri'), ('PCI DSS', 'pi si ay di es es'),
+                 ('OPC UA', 'o pe se u a'), ('HTTPS', 'he te te pe se'), ('SIEM', 'siyem'), ('TISAX', 'tisaks'), ('EVerest', 'Everest'),
+                 ('OSTİM', 'Ostim'), ('IEC ', 'i e se '), ('SAE ', 'se a e '),
                  ('3B ', 'üç boyutlu '), ('m² ', 'metrekare '), ('SQL', 'es kü el'), ('SSRF', 'es es ar ef'), ('XSS', 'iks es es'),
                  ('CSRF', 'si es ar ef'), ('TLS', 'te le se'), ('UNECE', 'BM Avrupa Ekonomik Komisyonu'), ('1.6J', 'bir nokta altı'),
                  ('kapi/saldiri_testleri.py', 'saldırı testleri dosyası'), ('OCPP', 'o se pe pe'), ('EPDK', 'e pe de ke'),
                  ('KVKK', 'ka ve ka ka'), ('BGYS', 'be ge ye se'), ('MFA', 'em ef a'), ('WAF', 'vaf'), ('OTA', 'o te a'),
-                 ('CSMS', 'si es em es'), ('ISO 27001', 'ISO yirmi yedi bin bir'),
+                 ('CSMS', 'si es em es'), ('ISO', 'İso'),
                  ('→', ','), (' · ', ', '), ('—', ','), ('(', ', '), (')', ',')]:
         s = s.replace(a, b)
     s = re.sub(r'(\d+),0 (mn|bin|mlr) TL', r'\1 \2 TL', s)
@@ -337,8 +362,14 @@ def konusma(t):
     s = re.sub(r'%(\d+)', r'yüzde \1', s)
     s = re.sub(r'(\d+)/(\d+) ', r'\1 üzerinden \2 ', s)
     s = re.sub(r'\b([1-5])\. adım', lambda m: SIRA[m.group(1)] + ' adım', s)
+    s = re.sub(r'([A-Za-zÇĞİÖŞÜçğıöşü])(\d)', r'\1 \2', s)                       # R155 → R 155
+    s = re.sub(r'(\d+),(\d+)', lambda m: sayi_oku(int(m.group(1))) + ' virgül ' + ' '.join(sayi_oku(int(c)) for c in m.group(2)), s)
+    s = re.sub(r'\d+', lambda m: sayi_oku(int(m.group())), s)
+    s = s.replace("'", '').replace('’', '').replace('"', '').replace('“', '').replace('”', '')   # kesme: ek bitişik okunur
+    s = s.replace(':', ',').replace(';', '.')
+    s = re.sub(r'(\w)-(\w)', r'\1 \2', s)                                         # e-posta → e posta
     s = re.sub(r',\s*,', ',', s)
-    s = re.sub(r'\s+([,.;:])', r'\1', s)
+    s = re.sub(r'\s+([,.?])', r'\1', s)
     s = re.sub(r'\s{2,}', ' ', s)
     return s.strip(' ,')
 
@@ -359,7 +390,10 @@ BOLUM_TONU = {'Miselyum': 'acilis', 'Kapanış': 'acilis', 'Belgeler ve gelecek'
 
 
 def ton(bolum):
-    return TON[BOLUM_TONU.get((bolum or 'Miselyum').split(' · ', 1)[-1], 'net')]
+    t = TON[BOLUM_TONU.get((bolum or 'Miselyum').split(' · ', 1)[-1], 'net')]
+    if SECIM and str(SECIM.get('model', '')).startswith(('eleven_flash', 'eleven_turbo')):
+        return {'speed': t['speed']}      # kararlılık ve stil varsayılan: ses denemesindekiyle aynı
+    return t
 
 
 async def seslendir(texts, bolum=None):
@@ -401,6 +435,21 @@ async def seslendir_eleven(texts, bolum):
     sem = asyncio.Semaphore(2)
     out = {}
     loop = asyncio.get_running_loop()
+
+    def dosya(t):
+        anahtar_metni = json.dumps([SECIM['voice_id'], SECIM.get('model'), ton(bolum.get(t)), konusma(t)], ensure_ascii=False)
+        return os.path.join(VOICE_DIR, 'el-' + hashlib.sha1(anahtar_metni.encode('utf-8')).hexdigest()[:16] + '.wav')
+    # Kota denetimi: önbellekte olmayan metinlerin kredisi kalan haktan fazlaysa hiç başlamaz
+    yeni = sum(len(konusma(t)) for t in sira if not os.path.exists(dosya(t)))
+    oran = 0.5 if str(SECIM.get('model', '')).startswith(('eleven_flash', 'eleven_turbo')) else 1.0
+    gerek = int(yeni * oran) + 1
+    try:
+        kullanilan, toplam = eleven.kota()
+        print('ElevenLabs: %d yeni karakter ≈ %d kredi · hesapta kalan %d' % (yeni, gerek, toplam - kullanilan), flush=True)
+        if yeni and gerek > toplam - kullanilan:
+            raise SystemExit('ElevenLabs kredisi yetmiyor: %d gerekli, %d kaldı. Hiçbir şey üretilmedi.' % (gerek, toplam - kullanilan))
+    except RuntimeError as e:
+        print('Kota okunamadı (%s); devam ediliyor: %d yeni karakter ≈ %d kredi' % (str(e)[:60], yeni, gerek), flush=True)
 
     async def one(i, t):
         spoken = konusma(t)
@@ -449,7 +498,7 @@ def karistir(silent, voice, music, out, sfx=None, muzik_duzey=0.8):
     Sonuç -16 LUFS (YouTube ve sunum için standart düzey)."""
     fc = ('[1:a]aresample=48000,pan=stereo|c0=c0|c1=c0,asplit=2[v][sc];'
           '[2:a]aresample=48000,volume=%.2f[m];'
-          '[m][sc]sidechaincompress=threshold=0.02:ratio=8:attack=25:release=650[md];' % muzik_duzey)
+          '[m][sc]sidechaincompress=threshold=0.02:ratio=5:attack=40:release=1100[md];' % muzik_duzey)
     girdiler = ['-i', silent, '-i', voice, '-i', music]
     if sfx:
         girdiler += ['-i', sfx]
@@ -468,9 +517,13 @@ def miksaj(veri):
     ses_izi([tuple(x) for x in veri['placements']], total, tmp_v)
     sahne = kurgu.kurgu([tuple(x) for x in veri['marks']], [tuple(x) for x in veri['olaylar']], total, FFMPEG, tmp_m, tmp_s)
     if not sahne:
-        odak_muzigi(tmp_m, total)
-        print('tanitim/muzik/ boş: bilgisayarda üretilen odak müziği kullanıldı', flush=True)
-    karistir(SILENT, tmp_v, tmp_m, VIDEO, tmp_s if sahne else None, muzik_duzey=0.6 if sahne else 0.8)
+        with wave.open(tmp_m, 'wb') as w:      # müzik yok: sessiz iz
+            w.setnchannels(2)
+            w.setsampwidth(2)
+            w.setframerate(48000)
+            w.writeframes(b'\x00' * (int((total + 2) * 48000) * 4))
+        print('tanitim/muzik/ boş: video müziksiz, yalnız anlatımla karıştırıldı', flush=True)
+    karistir(SILENT, tmp_v, tmp_m, VIDEO, tmp_s if sahne and os.path.getsize(tmp_s) > 1000 else None, muzik_duzey=0.5)
     for y in (tmp_v, tmp_m, tmp_s):
         if os.path.exists(y):
             os.remove(y)
@@ -1034,7 +1087,8 @@ async def film(f: Film, d: dict, dk: dict):
     await f.shot('37-gece-gorunumu')
     await f.point('.topbar-in > .icon-btn', settle=0.6)
     await f.card('Teşekkürler. <em>Miselyum</em>',
-                 'Akımyolu Şarj Hizmetleri A.Ş. ve Kıvılcım Otomotiv Teknolojileri A.Ş. kurgusal şirketlerdir; lokasyonlar, pazar verileri ve mevzuat gerçektir.',
+                 'Akımyolu Şarj Hizmetleri A.Ş. ve Kıvılcım Otomotiv Teknolojileri A.Ş. kurgusal şirketlerdir; lokasyonlar, pazar verileri ve mevzuat gerçektir. '
+                 'Müzik: Kevin MacLeod (incompetech.com), CC BY 4.0 · Seslendirme: ElevenLabs.',
                  kicker='Kapanış', secs=7, net=True,
                  say='Şirketleri tek bir risk ağına bağlayan Miselyum’u izlediğiniz için teşekkürler.')
 
@@ -1156,7 +1210,7 @@ async def main():
             fh.write('%d:%02d  %s\n' % (int(sec) // 60, int(sec) % 60, title))
         fh.write('\nToplam süre: %d:%02d\n' % (int(total) // 60, int(total) % 60))
         if sesli:
-            fh.write('Seslendirme: %s · müzik: tanitim/muzik/ (yoksa ses_uret.py)\n' % (SECIM['ad'] + ' (ElevenLabs)' if SES == 'eleven' else VOICES[SES]))
+            fh.write('Seslendirme: %s · müzik ve atıflar: tanitim/muzik/KAYNAKLAR.txt\n' % (SECIM['ad'] + ' (ElevenLabs)' if SES == 'eleven' else VOICES[SES]))
     print('Video:', VIDEO, '(%.0f sn)' % total)
 
 
