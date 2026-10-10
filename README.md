@@ -4,6 +4,16 @@ ISO/IEC 27001 odaklı bilgi güvenliği yönetim sistemi (BGYS) için bir dijita
 
 Örnek şirketler kurgusaldır: **Akımyolu** (elektrikli araç şarj ağı) ve **Kıvılcım Otomotiv** (elektrikli otomobil üretimi). Lokasyonlar, pazar verileri ve mevzuat gerçektir.
 
+## Tanıtım videosu
+
+> 17 dakikada Miselyum'un tüm ekranları: canlı şarj ağı, iki yönlü dijital ikiz, risk motoru, saldırı senaryoları, güvenlik kapısı ve daha fazlası.
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=o6AxnWpb7kY">
+    <img src="https://img.youtube.com/vi/o6AxnWpb7kY/hqdefault.jpg" alt="Miselyum Tanıtım Videosu" width="600" />
+  </a>
+</div>
+
 ## Neler var
 
 - **Dijital ikiz (Seviye 3):** 95 sanal şarj cihazı gerçek OCPP 1.6J ile bağlanır. İkiz sahadan okur, kendisi karar verip cihaza komut gönderir ve sonucu cihazın cevabıyla doğrular. Kurallar: kendini onarma, emniyet kilidi, güvenlik karantinası, yük yönetimi ve şebeke talebi, otomasyon freni (`kapi/ikiz3.py`).
@@ -26,11 +36,6 @@ Kapı olmadan da açılır: `index.html` dosyası tarayıcıda ikizi simülasyon
 
 Saldırı testleri: `python kapi/saldiri_testleri.py`
 
-## Tanıtım videosu
-
-> 17 dakikada Miselyum'un tüm ekranları: canlı şarj ağı, iki yönlü dijital ikiz, risk motoru, saldırı senaryoları, güvenlik kapısı ve daha fazlası.
-
-[![Miselyum Tanıtım Videosu](https://img.youtube.com/vi/o6AxnWpb7kY/maxresdefault.jpg)](https://www.youtube.com/watch?v=o6AxnWpb7kY)
 
 ## Kaynaklar
 
