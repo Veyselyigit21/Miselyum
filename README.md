@@ -30,7 +30,7 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 <video src="https://github.com/Veyselyigit21/Miselyum/raw/main/tanitim/Miselyum-tanitim.mp4" controls width="100%"></video>
 
-Panelin ekranlarını, dijital ikizi, risk motorunu ve saldırı testlerini 4 dakikada gösteren sesli tanıtım.
+Panelin ekranlarını, dijital ikizi, risk motorunu ve saldırı testlerini gösteren 17 dakikalık sesli tanıtım.
 
 ## Kaynaklar
 
