@@ -28,9 +28,16 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 ## Tanıtım videosu
 
-<video src="https://github.com/Veyselyigit21/Miselyum/raw/main/tanitim/Miselyum-tanitim.mp4" controls width="100%"></video>
+> 17 dakikada Miselyum'un tüm ekranları: canlı şarj ağı, iki yönlü dijital ikiz, risk motoru, saldırı senaryoları, güvenlik kapısı ve daha fazlası.
 
-Panelin ekranlarını, dijital ikizi, risk motorunu ve saldırı testlerini gösteren 17 dakikalık sesli tanıtım.
+[▶ Videoyu izle (tanitim/Miselyum-tanitim.mp4)](tanitim/Miselyum-tanitim.mp4)
+
+<p>
+  <img src="tanitim/ekranlar/04-genel-bakis.png" width="24%" />
+  <img src="tanitim/ekranlar/07-saha-canli.png" width="24%" />
+  <img src="tanitim/ekranlar/20-csms-saldirisi.png" width="24%" />
+  <img src="tanitim/ekranlar/38-seviye3.png" width="24%" />
+</p>
 
 ## Kaynaklar
 
