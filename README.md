@@ -28,7 +28,7 @@ Saldırı testleri: `python kapi/saldiri_testleri.py`
 
 ## Tanıtım videosu
 
-[`tanitim/Miselyum-tanitim.mp4`](tanitim/Miselyum-tanitim.mp4)
+<video src="https://github.com/Veyselyigit21/Miselyum/raw/main/tanitim/Miselyum-tanitim.mp4" controls width="100%"></video>
 
 `python tanitim/kayit.py` videoyu uygulamanın kendisinden kaydeder (Playwright, Edge). Seslendirme ve müzik ayrıntıları `tanitim/muzik/BENI-OKU.txt` ve `tanitim/kayit.py` başındaki açıklamada.
 
