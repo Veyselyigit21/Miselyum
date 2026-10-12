@@ -69,6 +69,8 @@ SIRKETLER = {'akimyolu', 'kivilcim'}
 # Yalnız bu yollar sunulur (izin listesi); kapi/ klasörü, veritabanı ve sertifikalar asla sunulmaz
 STATIK = re.compile(r'^/(baslat\.html|rehber\.html|giris\.html|kapi-oturum\.js|css/[\w.-]+\.css|js/(?:[\w-]+/)*[\w.-]+\.js)$')
 HERKESE_ACIK = {'/giris.html', '/css/giris.css', '/js/giris.js'}
+# Varsayılan veri paketi (js/data/) Akımyolu'nundur; saldırı testi sonuçları platforma aittir, herkese açıktır
+AKIMYOLU_PAKETI = re.compile(r'^/js/data/(?!guvenlik-testleri\.js$)[\w.-]+\.js$')
 TUR = {'.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8'}
 
 oturumlar = Oturumlar(bosta=BOSTA)
@@ -97,6 +99,7 @@ def kur():
             hesaplar = [
                 ('yonetici', 'Bilgi güvenliği yöneticisi', 'yonetici', ['akimyolu', 'kivilcim'], True),
                 ('analist', 'Risk analisti · yalnız Akımyolu', 'analist', ['akimyolu'], False),
+                ('kivilcim', 'Bilgi güvenliği sorumlusu · yalnız Kıvılcım', 'analist', ['kivilcim'], False),
                 ('izleyici', 'Denetçi · salt okunur', 'izleyici', ['akimyolu', 'kivilcim'], False)
             ]
             satirlar = ['Miselyum Kapısı · demo hesapları (yalnız bu bilgisayardaki demo içindir; gerçek parola kullanmayın)', '']
@@ -238,6 +241,9 @@ async def statik(req):
     if m and s and m.group(1) not in s['sirketler']:
         denetim(s['kullanici'], ip_of(req), 'sirket_erisim_reddedildi', m.group(1), 'red')
         return web.Response(status=403, text='Bu şirkete yetkiniz yok')
+    if AKIMYOLU_PAKETI.match(yol) and s and 'akimyolu' not in s['sirketler']:
+        # Akımyolu'na yetkisi olmayan kullanıcıya içerik yerine boş dosya gider; panel kendi şirket paketiyle kurulur
+        return web.Response(text='/* Bu şirket paketine yetkiniz yok. */\n', content_type='text/javascript', charset='utf-8')
     dosya = os.path.normpath(os.path.join(KOK, yol.lstrip('/')))
     if not dosya.startswith(KOK + os.sep) or not os.path.isfile(dosya):
         raise web.HTTPNotFound()
@@ -450,6 +456,8 @@ async def cihaz_komutu(req, s):
     if fren:
         denetim(s['kullanici'], ip_of(req), 'toplu_komut_freni', '%s %s/%d' % (komut, cp, kon), 'red')
         return js({'hata': fren, 'fren': True}, 423)
+    if not sirket_denetle(s, 'akimyolu', req):       # cihazlar Akımyolu'nun şarj ağına aittir
+        return js({'hata': 'Bu şirkete yetkiniz yok'}, 403)
     sonuc, e = await ikiz.elle(cp, kon, komut, kw, s['kullanici'])
     denetim(s['kullanici'], ip_of(req), 'cihaz_komutu', '%s %s/%d → %s' % (komut, cp, kon, sonuc), 'ok' if sonuc == 'Accepted' else 'red')
     return js({'sonuc': sonuc, 'eylem': e['id'] if e else None})
@@ -457,6 +465,8 @@ async def cihaz_komutu(req, s):
 
 @api()
 async def ikiz_durumu(req, s):
+    if not sirket_denetle(s, 'akimyolu', req):
+        return js({'hata': 'Bu şirkete yetkiniz yok'}, 403)
     return js({'ozet': ikiz.ozet(), 'eylemler': ikiz.liste()})
 
 
@@ -464,6 +474,8 @@ async def ikiz_durumu(req, s):
 async def ikiz_talep(req, s):
     """Şebeke talebi (puant): ağ yükünü belirli bir süre istenen oranda düşür. Süre simülasyon dakikasıdır (1 dk = 1 gerçek sn)."""
     v = await govde_json(req)
+    if not sirket_denetle(s, 'akimyolu', req):
+        return js({'hata': 'Bu şirkete yetkiniz yok'}, 403)
     if v.get('iptal'):
         ok = ikiz.talep_bitir('yönetici bitirdi')
         denetim(s['kullanici'], ip_of(req), 'sebeke_talebi', 'bitirildi')
@@ -485,6 +497,8 @@ async def ikiz_tatbikat(req, s):
     """Kırmızı takım tatbikatı: seçilen sanal cihaza imzasız yazılım paketi gönderilir; önlem ya da ikiz durdurmalı."""
     v = await govde_json(req)
     cp = str(v.get('cp', ''))[:40]
+    if not sirket_denetle(s, 'akimyolu', req):
+        return js({'hata': 'Bu şirkete yetkiniz yok'}, 403)
     if cp not in ikiz.u:
         return js({'hata': 'Bilinmeyen cihaz'}, 400)
     denetim(s['kullanici'], ip_of(req), 'tatbikat', 'imzasız yazılım → ' + cp)
@@ -508,7 +522,7 @@ async def guvenlik_durumu(req, s):
     with db() as c:
         say = {r['olay']: r['n'] for r in c.execute('SELECT olay, COUNT(*) n FROM denetim WHERE zaman > ? GROUP BY olay', (int(time.time()) - 86400,))}
     return js({'oturum': oturumlar.sayi(), 'waf': waf.engellenen, 'waf_son': list(waf.son)[-10:], 'istek_siniri': sinir.engellenen,
-               'olaylar_24s': say, 'ocpp': merkez.ozet()})
+               'olaylar_24s': say, 'ocpp': merkez.ozet() if 'akimyolu' in s['sirketler'] else None})
 
 
 @api()
@@ -547,6 +561,9 @@ async def canli(req):
     s = oturum_al(req)
     if not s or req.headers.get('Origin') not in KOKENLER:
         return web.Response(status=401, text='Giriş gerekli')
+    if 'akimyolu' not in s['sirketler']:      # canlı akış Akımyolu'nun cihaz verisidir
+        denetim(s['kullanici'], ip_of(req), 'sirket_erisim_reddedildi', 'canlı akış: akimyolu', 'red')
+        return web.Response(status=403, text='Bu şirkete yetkiniz yok')
     ws = web.WebSocketResponse(heartbeat=25)
     await ws.prepare(req)
     ws['oturum'] = s['id']

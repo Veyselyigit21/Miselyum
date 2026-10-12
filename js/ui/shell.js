@@ -126,7 +126,7 @@
       sub.textContent = LINK_LABEL[L.mode] + (L.mode === 'canli' ? ' · ' + L.devices + ' cihaz' : count ? ' · ' + count : '');
       btn.title = 'Miselyum ağına bağlı şirket: ' + t.name + ' · ' + LINK_LABEL[L.mode] + (tw ? ' · ' + tw.sites.length + ' düğüm, ' + tw.connectors.length + ' uç nokta' : '');
       SK.clear(menu).appendChild(h('div', { class: 'net-head' }, SK.brandMark('net-mark'),
-        h('div', null, h('b', null, 'Miselyum ağı'), h('span', null, SK.tenants.length + ' şirket bağlı · bir şirket seçin'))));
+        h('div', null, h('b', null, 'Miselyum ağı'), h('span', null, SK.tenants.length > 1 ? SK.tenants.length + ' şirkete yetkilisiniz · bir şirket seçin' : 'Yalnız yetkili olduğunuz şirket görünür'))));
       SK.tenants.forEach(x => {
         const here = x.id === SK.tenantId;
         menu.appendChild(h('button', { type: 'button', role: 'menuitemradio', 'aria-checked': String(here), class: 'net-item' + (here ? ' is-here' : ''),
@@ -137,6 +137,8 @@
       menu.appendChild(h('p', { class: 'net-foot' }, L.mode === 'canli'
         ? 'Veri, Miselyum Kapısı üzerinden bağlı cihazlardan anlık geliyor.'
         : 'Veri bu bilgisayarda simüle ediliyor. Canlı bağlantı için uygulamayı Miselyum Kapısı ile açın.'));
+      if (SK.tenants.length > 1) menu.appendChild(h('p', { class: 'net-foot' },
+        'Şirket değiştirme yalnız birden çok şirkete yetkili hesaplarda görünür: grup ya da holding güvenlik ekibi, denetçi, hizmet sağlayıcı. Bir şirketin kendi kullanıcısı yalnız kendi şirketini görür.'));
     }
     function open() { sync(); menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
     function close() { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); }

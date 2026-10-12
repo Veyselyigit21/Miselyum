@@ -19,7 +19,7 @@ ISO/IEC 27001 odaklı bilgi güvenliği yönetim sistemi (BGYS) için bir dijita
 - **Dijital ikiz (Seviye 3):** 95 sanal şarj cihazı gerçek OCPP 1.6J ile bağlanır. İkiz sahadan okur, kendisi karar verip cihaza komut gönderir ve sonucu cihazın cevabıyla doğrular. Kurallar: kendini onarma, emniyet kilidi, güvenlik karantinası, yük yönetimi ve şebeke talebi, otomasyon freni (`kapi/ikiz3.py`).
 - **Risk motoru:** 37 risk, 33 önlem (ISO/IEC 27001:2022 Ek A eşlemesi), 17 olay senaryosu, Faz 1 ve Faz 2 planları, sigorta ve uyum (EPDK, KVKK, 7545, PCI DSS).
 - **Miselyum Kapısı** (`kapi/kapi.py`): panelin önündeki güvenlik kapısı. Sunucu tarafı oturum, roller, iki adımlı doğrulama, CSRF, CSP, WAF, SSRF koruması, istek sınırı, denetim kaydı, OCPP güvenlik profilleri 1/2/3.
-- **Kanıt:** `kapi/saldiri_testleri.py` Kapı'nın ayrı bir örneğine gerçek saldırı istekleri gönderir; 63/63 test geçiyor (`kapi/TEST-RAPORU.md`).
+- **Kanıt:** `kapi/saldiri_testleri.py` Kapı'nın ayrı bir örneğine gerçek saldırı istekleri gönderir; 67/67 test geçiyor (`kapi/TEST-RAPORU.md`).
 
 ## Çalıştırma
 

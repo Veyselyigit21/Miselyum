@@ -1,10 +1,10 @@
 ﻿/* Saldırı testlerinin son sonucu. kapi/saldiri_testleri.py çalışınca bu dosyayı yeniden yazar. */
 window.SK.securityTests = {
- "tarih": "09.10.2026 00:27",
- "sure": 112,
+ "tarih": "12.10.2026 04:42",
+ "sure": 84,
  "ozet": {
-  "gecti": 63,
-  "toplam": 63,
+  "gecti": 67,
+  "toplam": 67,
   "atlandi": 0
  },
  "ortam": "Test örneği 127.0.0.1:8771; boşta 10 sn, MFA tazeliği 2 sn, giriş penceresi 6 sn",
@@ -381,17 +381,45 @@ window.SK.securityTests = {
    "gecti": true
   },
   {
+   "grup": "kiraci",
+   "ad": "Başka şirketin veri paketi",
+   "beklenen": "Yalnız Kıvılcım hesabı Akımyolu risk kaydını ister: içerik yerine boş dosya; Akımyolu analisti gerçek veriyi alır",
+   "sonuc": "Kıvılcım hesabı 40 bayt, Akımyolu analisti 18678 bayt",
+   "gecti": true
+  },
+  {
+   "grup": "kiraci",
+   "ad": "Başka şirketin canlı cihaz akışı",
+   "beklenen": "Yalnız Kıvılcım hesabı Akımyolu cihaz akışına (/canli) bağlanır: 403",
+   "sonuc": "403",
+   "gecti": true
+  },
+  {
+   "grup": "kiraci",
+   "ad": "Başka şirketin ikiz verisi",
+   "beklenen": "Yalnız Kıvılcım hesabı Akımyolu ikiz özetini ister: 403; iki şirkete yetkili izleyici: 200",
+   "sonuc": "403 / 200",
+   "gecti": true
+  },
+  {
+   "grup": "kiraci",
+   "ad": "Olumlu kontrol: kendi şirketi",
+   "beklenen": "Kıvılcım hesabı kendi önlemlerini okur: 200; Akımyolu önlemleri: 403",
+   "sonuc": "200 / 403",
+   "gecti": true
+  },
+  {
    "grup": "ikiz",
    "ad": "Onaysız yazılımla açılan cihaz",
    "beklenen": "Onaylı 3.2.0 yerine 3.2.0+mod ile açılış: ikiz 4 sn içinde ChangeAvailability(0, Inoperative) gönderir",
-   "sonuc": "9 ms sonra Inoperative, ikizde karantinada",
+   "sonuc": "10 ms sonra Inoperative, ikizde karantinada",
    "gecti": true
   },
   {
    "grup": "ikiz",
    "ad": "Onaylı yazılıma dönünce",
    "beklenen": "Aynı cihaz 3.2.0 ile açılınca ikiz karantinayı kaldırır: ChangeAvailability(0, Operative)",
-   "sonuc": "5 ms sonra Operative",
+   "sonuc": "18 ms sonra Operative",
    "gecti": true
   },
   {
@@ -426,7 +454,7 @@ window.SK.securityTests = {
    "grup": "sinir",
    "ad": "Kullanıcı adı tahmini",
    "beklenen": "Olmayan kullanıcı ve yanlış parola: aynı yanıt, yakın süre",
-   "sonuc": "yanıtlar aynı, süre oranı 0.92",
+   "sonuc": "yanıtlar aynı, süre oranı 0.61",
    "gecti": true
   },
   {

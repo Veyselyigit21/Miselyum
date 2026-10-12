@@ -566,6 +566,36 @@ def _():
     return d == 200 and r == '403', 'önlem %d, bağlantı %s' % (d, r)
 
 
+# ================================================================ Şirketler arası ayrım (çok kiracılı yapı)
+@test('kiraci', 'Başka şirketin veri paketi', 'Yalnız Kıvılcım hesabı Akımyolu risk kaydını ister: içerik yerine boş dosya; Akımyolu analisti gerçek veriyi alır')
+def _():
+    k = oturum('kivilcim').istek('GET', '/js/data/risks.js')[3]
+    a = oturum('analist').istek('GET', '/js/data/risks.js')[3]
+    ok = b'SK.risks' not in k and len(k) < 100 and b'SK.risks' in a
+    return ok, 'Kıvılcım hesabı %d bayt, Akımyolu analisti %d bayt' % (len(k), len(a))
+
+
+@test('kiraci', 'Başka şirketin canlı cihaz akışı', 'Yalnız Kıvılcım hesabı Akımyolu cihaz akışına (/canli) bağlanır: 403')
+def _():
+    d = oturum('kivilcim').istek('GET', '/canli')[0]
+    return d == 403, str(d)
+
+
+@test('kiraci', 'Başka şirketin ikiz verisi', 'Yalnız Kıvılcım hesabı Akımyolu ikiz özetini ister: 403; iki şirkete yetkili izleyici: 200')
+def _():
+    d1 = oturum('kivilcim').istek('GET', '/api/ikiz')[0]
+    d2 = oturum('izleyici').istek('GET', '/api/ikiz')[0]
+    return d1 == 403 and d2 == 200, '%d / %d' % (d1, d2)
+
+
+@test('kiraci', 'Olumlu kontrol: kendi şirketi', 'Kıvılcım hesabı kendi önlemlerini okur: 200; Akımyolu önlemleri: 403')
+def _():
+    k = oturum('kivilcim')
+    d1 = k.istek('GET', '/api/kontroller?sirket=kivilcim')[0]
+    d2 = k.istek('GET', '/api/kontroller?sirket=akimyolu')[0]
+    return d1 == 200 and d2 == 403, '%d / %d' % (d1, d2)
+
+
 # ================================================================ Seviye 3 ikiz: otomatik karar, fren ve yetki
 def sahte_cihaz(kimlik, fw):
     """Profil 3 ile kendi sertifikasıyla bağlanan sahte cihaz: verilen yazılım sürümüyle açılır, merkezin gönderdiği

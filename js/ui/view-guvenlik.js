@@ -53,6 +53,11 @@
     { id: 'csrf', t: 'CSRF (siteler arası istek sahteciliği)', risk: 'Kullanıcı başka bir sitedeyken onun adına önlem kapatmak ya da komut göndermek.',
       p: ['Çerez SameSite=Strict: başka siteden gelen istekle gönderilmez.',
         'Durum değiştiren her istekte Origin başlığı ve oturuma özel X-CSRF belirteci denetlenir.'], a: '8.26' },
+    { id: 'kiraci', t: 'Şirketler arası veri sızıntısı', risk: 'Bir şirketin kullanıcısının başka şirketin risk kaydını, kat planını ya da canlı cihaz verisini görmesi.',
+      p: ['Her oturumun yetkili olduğu şirketler sunucuda tutulur; şirket paketi ve cihaz verisi yalnız yetkili oturuma gönderilir.',
+        'Yetkisiz kullanıcıya veri dosyası yerine boş dosya gider; panel yalnız kendi şirket paketiyle kurulur.',
+        'Canlı cihaz akışı, ikiz verisi ve cihaz komutları şirket yetkisi olmadan 403 döner; deneme denetim kaydına yazılır.',
+        'Şirket değiştirme düğmesi yalnız birden çok şirkete yetkili hesaplarda görünür (grup güvenlik ekibi, denetçi).'], a: '5.15 · 8.3 · 5.23' },
     { id: 'ocpp', t: 'Sahte cihaz ve dinleme (OCPP)', risk: 'Şifresiz bağlantıyı dinleyip parolayı almak ya da sahte cihazla merkeze bağlanmak.',
       p: ['Profil 1 (şifresiz) bağlantı önlemle tek tıkla kapatılır; cihazlar TLS\'e geçmek zorunda kalır.',
         'Profil 2: TLS + cihaza özel parola (merkezde pbkdf2 özeti). Profil 3: karşılıklı TLS, sertifikadaki ad cihaz kimliğiyle aynı olmalı.',
@@ -183,6 +188,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
     title: 'Güvenlik merkezi',
     mount(main) {
       const K = SK.kapi && SK.kapi.aktif, OT = K ? SK.kapi.oturum : null;
+      const AKY = SK.tenantId === 'akimyolu';     // canlı OCPP cihazları Akımyolu'nun şarj ağına aittir
       const timers = [];
       main.appendChild(SK.viewHead('Kontrol et · Miselyum Kapısı', 'Güvenlik merkezi',
         K ? 'Panel şu an Miselyum Kapısı\'nın arkasında çalışıyor (' + OT.kullanici + ', ' + SK.kapi.ROL[OT.rol] + '). Aşağıdaki sayılar sunucudan anlık geliyor; her deneme denetim kaydına yazılıyor.'
@@ -195,14 +201,15 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
       };
       const sOt = stat('Açık oturum', 'kullanıcı başına en fazla 2'), sWaf = stat('WAF engeli', 'Kapı açıldığından beri'),
         sLim = stat('İstek sınırı engeli', 'kaba kuvvet ve taşma'), sRed = stat('Reddedilen yetki', 'son 24 saat · rol, şirket, CSRF'),
-        sDev = stat('Bağlı OCPP cihazı', K ? 'Profil 1 / 2 / 3' : 'Kapı ile canlı');
+        sDev = AKY ? stat('Bağlı OCPP cihazı', K ? 'Profil 1 / 2 / 3' : 'Kapı ile canlı') : stat('Canlı bağlayıcı', SK.tenant.connector + ' · henüz bağlı değil');
+      if (!AKY) sDev.v.textContent = '–';
       main.appendChild(h('div', { class: 'stat-row' }, sOt.el, sWaf.el, sLim.el, sRed.el, sDev.el));
       if (!K) {
         // Kapı yokken: mimarinin sabit özeti (canlı sayılar Kapı ile gelir)
         const T = SK.securityTests;
         [[sOt, String(PIPE.length), 'denetim katmanı', 'Bir isteğin yolculuğu'], [sWaf, String(WAF_RULES.length), 'WAF kuralı · eşik 5 puan', 'WAF kuralları'],
           [sLim, '3', 'rol: izleyici, analist, yönetici', 'Rol ve şirket yetkisi'], [sRed, T ? T.ozet.gecti + '/' + T.ozet.toplam : '–', 'saldırı testi geçti', 'Savunma testleri'],
-          [sDev, '3', 'OCPP güvenlik profili', 'OCPP profilleri']].forEach(([st, v, n, l]) => {
+          [sDev, '3', 'OCPP güvenlik profili', 'OCPP profilleri']].filter(x => AKY || x[0] !== sDev).forEach(([st, v, n, l]) => {
           st.v.textContent = v; st.n.textContent = n; st.el.querySelector('.label').textContent = l;
         });
       }
@@ -218,7 +225,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
       main.appendChild(h('div', { class: 'panel stack' },
         h('div', { class: 'panel-head' }, h('h2', null, 'Tehditler ve korumalar'),
           h('span', { class: 'note' }, SK.securityTests ? 'Kanıt: ' + SK.securityTests.ozet.gecti + '/' + SK.securityTests.ozet.toplam + ' saldırı testi geçti (' + SK.securityTests.tarih + ')' : 'Kanıt: kapi/saldiri_testleri.py')),
-        h('div', { class: 'threats' }, THREATS.map(x => {
+        h('div', { class: 'threats' }, THREATS.filter(x => AKY || (x.id !== 'ocpp' && x.id !== 'ikiz')).map(x => {
           const tr = testsOf(x.id);
           return h('article', { class: 'threat' },
             h('h3', null, x.t),
@@ -235,7 +242,8 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
         h('ol', { class: 'plain' },
           h('li', null, 'Proje klasöründe ', h('code', null, 'baslat-miselyum-kapi.bat'), ' dosyasını çalıştırın (ya da ', h('code', null, 'python kapi/kapi.py'), ').'),
           h('li', null, 'Tarayıcıda ', h('code', null, 'http://127.0.0.1:8770'), ' açılır; demo hesapları ', h('code', null, 'kapi/veri/demo-hesaplar.txt'), ' dosyasındadır.'),
-          h('li', null, '95 sanal şarj ünitesi gerçek OCPP 1.6J ile Kapı\'ya bağlanır; ikiz Seviye 3\'e geçer: sahadan okur, kendisi komut gönderir ve sonucu doğrular.'))));
+          AKY ? h('li', null, '95 sanal şarj ünitesi gerçek OCPP 1.6J ile Kapı\'ya bağlanır; ikiz Seviye 3\'e geçer: sahadan okur, kendisi komut gönderir ve sonucu doğrular.')
+            : h('li', null, 'Her şirket yalnız kendi verisini görür: oturum hangi şirketlere yetkiliyse sunucu yalnız o şirketlerin paketini ve cihaz verisini gönderir.'))));
 
       // ---- Örnek yapılandırmalar ----
       main.appendChild(h('div', { class: 'panel stack' },
@@ -251,7 +259,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
               h('tbody', null, LIMITS.map(r => h('tr', null, r.map((c, i) => h('td', { class: i === 0 ? 'cell-title' : '' }, c))))))),
             h('p', { class: 'note' }, 'Kayan pencere: her anahtar için son isteklerin zamanı tutulur, pencere dışına çıkanlar düşer. Kilit süresi her yeni kilitte ikiye katlanır (15, 30, 60 dk).'))),
         h('div', { class: 'grid-even' }, codeBlock('nginx'), codeBlock('modsec')),
-        h('div', { class: 'grid-even' }, codeBlock('basliklar'), codeBlock('ocpp'))));
+        h('div', { class: 'grid-even' }, codeBlock('basliklar'), AKY ? codeBlock('ocpp') : null)));
 
       // ---- Ağ bölgeleri ve kurulum kararı ----
       main.appendChild(h('div', { class: 'panel stack' },
@@ -262,8 +270,9 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
           zone('Uygulama bölgesi', 'Miselyum Kapısı ve çekirdek', ['Oturum, rol, şirket denetimi', 'İkiz, risk ve senaryo motorları'], 'is-core'),
           zone('Veri bölgesi', 'Veritabanı ve denetim kaydı', ['İnternete çıkışı yok', 'Şifreli günlük yedek'], 'is-data')),
         h('div', { class: 'zones zones-2' },
-          zone('Cihaz bölgesi', 'Şarj üniteleri (özel APN / VLAN)', ['Yalnız 9443 ve 9444 (OCPP TLS)', 'Profil 1 kapatılabilir'], 'is-dev'),
-          zone('Fabrika OT bölgesi', 'IEC 62443 bölge ve kanal', ['Üretim ağı internete açılmaz', 'Hif ajanı yalnız dışa doğru mTLS'], 'is-dev')),
+          AKY ? zone('Cihaz bölgesi', 'Şarj üniteleri (özel APN / VLAN)', ['Yalnız 9443 ve 9444 (OCPP TLS)', 'Profil 1 kapatılabilir'], 'is-dev') : null,
+          AKY ? null : zone('Fabrika OT bölgesi', 'IEC 62443 bölge ve kanal', ['Üretim ağı internete açılmaz', 'Hif ajanı yalnız dışa doğru mTLS'], 'is-dev'),
+          zone('Şirket ayrımı', 'Her şirket ayrı paket ve yetki', ['Paket ve cihaz verisi yalnız yetkili oturuma', 'Yetkisiz deneme denetim kaydına'], 'is-data')),
         h('div', { class: 'table-wrap' }, h('table', { class: 'data' },
           h('thead', null, h('tr', null, h('th', null, 'Ölçüt'), h('th', null, 'Yerinde (on-prem)'), h('th', null, 'Bulut (Türkiye bölgesi)'), h('th', null, 'Miselyum kararı'))),
           h('tbody', null, [
@@ -299,6 +308,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
   // ---- Kapı ile canlı bölüm ----
   function liveSection(timers, S) {
     const api = SK.kapi.api, can = SK.kapi.can;
+    const AKY = SK.tenantId === 'akimyolu';
     const wrap = h('div', { class: 'stack' });
 
     // Durum şeridi ve OCPP
@@ -306,7 +316,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
     async function refresh() {
       if (!can('guvenlik_goruntule')) {
         const o = SK.link.ozet;
-        if (o) { S.sDev.v.textContent = F.n(o.bagli); S.sDev.n.textContent = o.profil[1] + ' / ' + o.profil[2] + ' / ' + o.profil[3]; }
+        if (o && AKY) { S.sDev.v.textContent = F.n(o.bagli); S.sDev.n.textContent = o.profil[1] + ' / ' + o.profil[2] + ' / ' + o.profil[3]; }
         return;
       }
       const r = await api('api/guvenlik');
@@ -316,6 +326,8 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
       S.sWaf.v.textContent = F.n(d.waf);
       S.sLim.v.textContent = F.n(d.istek_siniri);
       S.sRed.v.textContent = F.n((ev.yetki_reddedildi || 0) + (ev.sirket_erisim_reddedildi || 0) + (ev.csrf_reddedildi || 0));
+      wafList(d.waf_son || []);
+      if (!AKY || !o) return;       // cihaz verisi yalnız Akımyolu'na yetkili oturumda ve Akımyolu ekranında
       S.sDev.v.textContent = F.n(o.bagli);
       S.sDev.n.textContent = 'Profil 1 / 2 / 3: ' + o.profil[1] + ' / ' + o.profil[2] + ' / ' + o.profil[3];
       SK.clear(ocppBox);
@@ -393,6 +405,9 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
     }
 
     wrap.appendChild(h('div', { class: 'grid-even' },
+      !AKY ? h('div', { class: 'panel stack' }, h('div', { class: 'panel-head' }, h('h2', null, 'Cihaz bağlantıları'), h('span', { class: 'note' }, SK.tenant.short + ' · ' + SK.tenant.connector)),
+        h('p', { class: 'callout' }, 'Bu şirketin bağlayıcısı henüz canlı bağlı değil; veriler simülasyondan geliyor.'),
+        h('p', { class: 'cell-sub' }, 'Şirketler birbirinden ayrıdır: başka bir şirketin cihaz verisi ve komutları burada gösterilmez, sunucu da yetkisiz oturuma göndermez. Deneme denetim kaydına yazılır.')) :
       h('div', { class: 'panel stack' }, h('div', { class: 'panel-head' }, h('h2', null, 'OCPP cihaz bağlantıları'), h('span', { class: 'note' }, 'Akımyolu şarj ağı · canlı')), ocppBox,
         h('h3', null, 'Cihaza komut gönder'),
         h('p', { class: 'cell-sub' }, 'Yalnız yönetici; son 5 dakikada iki adımlı doğrulama ister. Komut gerçek OCPP mesajı olarak cihaza gider (RemoteStopTransaction, ChangeAvailability); ikiz, cihazın bir sonraki mesajıyla uygulandığını doğrular. Daha fazla komut: Saha ikizi › Seviye 3.'),
@@ -405,7 +420,7 @@ wss://127.0.0.1:9444/ocpp/<kimlik>   Profil 3   TLS 1.2+, karşılıklı sertifi
         h('p', { class: 'cell-sub' }, 'Sunucu yalnız izinli alan adlarına, HTTPS ile gider. Bulut meta veri adresi ya da iç ağ denemesi iki katmanda durur: önce WAF, atlatılırsa adres denetimi.'),
         url, h('div', { class: 'cta-row tight' }, h('button', { type: 'button', class: 'btn btn-primary btn-sm', onclick: preview }, 'Önizle'),
           ssrfPreset('Meta veri adresi', 'http://169.254.169.254/latest/meta-data/'), ssrfPreset('Kapı\'nın kendisi', 'https://127.0.0.1:8770/api/denetim'),
-          ssrfPreset('İzinsiz alan adı', 'https://example.com/'), ssrfPreset('İzinli: EPDK', 'https://www.epdk.gov.tr/')),
+          ssrfPreset('İzinsiz alan adı', 'https://example.com/'), ssrfPreset('İzinli alan adı', 'https://www.epdk.gov.tr/')),
         ssrfOut,
         h('h3', null, 'Son WAF engelleri'), wafBox)));
 

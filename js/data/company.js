@@ -31,7 +31,7 @@
       revenueLabel: 'Bugünkü gelir', energyNote: 'kWh', protocol: 'OCPP', logTitle: 'OCPP mesaj akışı',
       unitTitle: 'Şarj ünitesi', endpointTitle: 'Soket', hostLabel: 'Ev sahibi', weakNote: 'şifresiz', profileTitle: 'OCPP güvenlik profili',
       loadTitle: 'Ağ yükü', hourlyTitle: 'Bugünün saatlik geliri', hourlySeries: 'Saatlik gelir', stateTitle: 'Soket durumları', revenueTitle: 'Beklenen gelir',
-      allUnits: 'Tüm şarj üniteleri', lossNote: 'Gelir kaybı ikizdeki soketlerin beklenen gelirinden hesaplanır'
+      allUnits: 'Tüm şarj üniteleri', lossNote: 'Gelir kaybı ikizdeki soketlerin beklenen gelirinden hesaplanır', lossLabel: 'Kayıp şarj geliri'
     },
     // Ekran metinleri: şirkete özgü cümleler burada, ekranlar yalnız bunları gösterir
     ui: {

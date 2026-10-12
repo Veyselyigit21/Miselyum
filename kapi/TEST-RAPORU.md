@@ -1,6 +1,6 @@
 # Miselyum Kapısı · savunma doğrulama testleri
 
-09.10.2026 00:27 · 63/63 test geçti · 112 sn
+12.10.2026 04:42 · 67/67 test geçti · 84 sn
 
 Test örneği 127.0.0.1:8771; boşta 10 sn, MFA tazeliği 2 sn, giriş penceresi 6 sn. Kurallar ve sınır sayıları üretimdekiyle aynıdır.
 
@@ -59,13 +59,17 @@ Test örneği 127.0.0.1:8771; boşta 10 sn, MFA tazeliği 2 sn, giriş penceresi
 | ocpp | Başka cihazın sertifikası | A cihazının sertifikasıyla B olarak bağlanma: 401 | 401 | ✓ |
 | ocpp | Olumlu kontrol: kendi sertifikası | Profil 3, doğru sertifika: bağlanır | bağlandı | ✓ |
 | ocpp | Profil 1 kapatılınca | "OCPP güvenlik profili geçişi" açılınca doğru parolayla bile 403 | önlem 200, bağlantı 403 | ✓ |
-| ikiz | Onaysız yazılımla açılan cihaz | Onaylı 3.2.0 yerine 3.2.0+mod ile açılış: ikiz 4 sn içinde ChangeAvailability(0, Inoperative) gönderir | 9 ms sonra Inoperative, ikizde karantinada | ✓ |
-| ikiz | Onaylı yazılıma dönünce | Aynı cihaz 3.2.0 ile açılınca ikiz karantinayı kaldırır: ChangeAvailability(0, Operative) | 5 ms sonra Operative | ✓ |
+| kiraci | Başka şirketin veri paketi | Yalnız Kıvılcım hesabı Akımyolu risk kaydını ister: içerik yerine boş dosya; Akımyolu analisti gerçek veriyi alır | Kıvılcım hesabı 40 bayt, Akımyolu analisti 18678 bayt | ✓ |
+| kiraci | Başka şirketin canlı cihaz akışı | Yalnız Kıvılcım hesabı Akımyolu cihaz akışına (/canli) bağlanır: 403 | 403 | ✓ |
+| kiraci | Başka şirketin ikiz verisi | Yalnız Kıvılcım hesabı Akımyolu ikiz özetini ister: 403; iki şirkete yetkili izleyici: 200 | 403 / 200 | ✓ |
+| kiraci | Olumlu kontrol: kendi şirketi | Kıvılcım hesabı kendi önlemlerini okur: 200; Akımyolu önlemleri: 403 | 200 / 403 | ✓ |
+| ikiz | Onaysız yazılımla açılan cihaz | Onaylı 3.2.0 yerine 3.2.0+mod ile açılış: ikiz 4 sn içinde ChangeAvailability(0, Inoperative) gönderir | 10 ms sonra Inoperative, ikizde karantinada | ✓ |
+| ikiz | Onaylı yazılıma dönünce | Aynı cihaz 3.2.0 ile açılınca ikiz karantinayı kaldırır: ChangeAvailability(0, Operative) | 18 ms sonra Operative | ✓ |
 | ikiz | Toplu komut freni | "Toplu komut ve yük koruması" açıkken 60 sn içinde 6. cihaza durdurucu komut: 423; önlem kapalıyken geçer | önlem kapalı: 6 × 200 · önlem açık (200): 423 | ✓ |
 | ikiz | Geçersiz şebeke talebi | Yönetici yükü %90 kısmak ister: 400 (en çok %50); talep başlamaz | 400 · Talep oranı %10 ile %50, süre 15 ile 240 dakika  | ✓ |
 | ikiz | Şebeke talebi yetkisi | Analist rolüyle şebeke talebi: 403 (yalnız yönetici) | 403 | ✓ |
 | ikiz | Tatbikat yetkisi | İzleyici rolüyle imzasız yazılım tatbikatı: 403 | 403 | ✓ |
-| sinir | Kullanıcı adı tahmini | Olmayan kullanıcı ve yanlış parola: aynı yanıt, yakın süre | yanıtlar aynı, süre oranı 0.92 | ✓ |
+| sinir | Kullanıcı adı tahmini | Olmayan kullanıcı ve yanlış parola: aynı yanıt, yakın süre | yanıtlar aynı, süre oranı 0.61 | ✓ |
 | sinir | Genel istek seli | 10 sn'de 300'ü aşan istek: 429 | 360 istekten 89 tanesi 429 | ✓ |
 | sinir | Parola deneme (IP sınırı) | 6 sn içinde 6. deneme: 429 (üretimde 60 sn) | 401 401 401 401 401 429 | ✓ |
 | sinir | Hesap kilidi | 5 hatadan sonra doğru parola bile reddedilir: 423 | 423 Hesap geçici olarak kilitli. 15 dakika sonra tekrar deneyin. | ✓ |

@@ -40,7 +40,7 @@
       unitTitle: 'Cihaz ve istasyon', endpointTitle: 'İstasyon', hostLabel: 'Yer', weakNote: 'temel koruma', profileTitle: 'IEC 62443 güvenlik seviyesi',
       loadTitle: 'Tesis yükü', hourlyTitle: 'Bugünün saatlik üretim değeri', hourlySeries: 'Saatlik üretim değeri', stateTitle: 'İstasyon durumları',
       revenueTitle: 'Beklenen üretim değeri', allUnits: 'Tüm üretim ve servis cihazları',
-      lossNote: 'Üretim kaybı ikizdeki istasyonların beklenen üretim değerinden hesaplanır'
+      lossNote: 'Üretim kaybı ikizdeki istasyonların beklenen üretim değerinden hesaplanır', lossLabel: 'Kayıp üretim değeri'
     },
     messages: {
       start: (c, s) => 'OPC UA Write ' + c.unitId + '.Is.Basla {iş:' + s.id + ', VIN:"' + vin() + '"}',
@@ -55,7 +55,7 @@
     ui: {
       heroEyebrow: 'kurgusal şirket, gerçek konumlar',
       heroTitle: ['Bir otomobil fabrikasının siber güvenliğini ', 'dijital ikizi', ' üzerinde deniyoruz.'],
-      heroLead: 'Miselyum; Kıvılcım\'ın TOSB\'deki üretim tesisini, robot hücrelerinden hat sonu yazılım yüklemesine kadar 51 istasyonu, Ar-Ge merkezini, batarya deposunu ve 6 servis noktasını canlı simüle eder. Akımyolu ile aynı motor, farklı şirket paketi.',
+      heroLead: 'Miselyum; Kıvılcım\'ın TOSB\'deki üretim tesisini, robot hücrelerinden hat sonu yazılım yüklemesine kadar 51 istasyonu, Ar-Ge merkezini, batarya deposunu ve 6 servis noktasını canlı simüle eder. Miselyum motoru burada bu şirkete özel paketle çalışır.',
       deadline: { date: [2027, 5, 30], label: 'UNECE R155 sertifika yenileme denetimine', text: 'Araç tip onayı için zorunlu siber güvenlik yönetim sistemi (CSMS) sertifikasının yenileme denetimi 30 Haziran 2027\'de (kurgusal plan). R155, AB\'de Temmuz 2024\'ten beri satılan bütün yeni araçlar için zorunlu.' },
       planNote: 'Faz 1, CSMS yenileme denetiminden önce bitecek plandır.',
       faz1When: 'Haziran 2027', faz2When: 'Aralık 2027',
@@ -85,7 +85,7 @@
     yontem: {
       gap: [
         'Bir otomobil üreticisi aynı anda üç dünyayı korur: fabrika (OT: robot, PLC, AGV), kurumsal BT ve sahadaki araçlar (OTA, bağlı araç). UNECE R155 ve R156 tip onayı için siber güvenlik ve yazılım güncelleme yönetim sistemi şartı koyar.',
-        'Akımyolu için kurulan Miselyum motoru bu şirkete kod değişmeden, yalnız şirket paketi yazılarak uyarlandı: kat planı, istasyonlar, riskler, önlemler, senaryolar ve mevzuat.'],
+        'Miselyum motoru bu şirkete kod değişmeden, yalnız şirket paketi yazılarak uyarlandı: kat planı, istasyonlar, riskler, önlemler, senaryolar ve mevzuat. Paketler birbirinden ayrıdır; bir şirketin kullanıcısı başka şirketin verisini göremez.'],
       revenue: () => 'hat sonunda biten her araç için 650 bin TL katma değer varsayımı',
       provenance: [
         ['Tesis konumları (9 yer)', 'Gerçek', 'OpenStreetMap kayıtları (Photon ile 8 Ekim 2026): TOSB, Teknopark İstanbul, Gebze Makine İhtisas OSB ve 6 AVM'],

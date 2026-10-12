@@ -40,9 +40,14 @@
   const TERMS = {
     endpoint: 'uç nokta', unit: 'cihaz', site: 'lokasyon', sites: 'lokasyon', hqLabel: 'Merkez',
     busy: 'Çalışıyor', busyCount: 'cihaz', onlineLabel: 'Çevrimiçi uç nokta', busyLabel: 'Şu an çalışan',
-    revenueLabel: 'Bugünkü değer', energyNote: 'kWh', protocol: 'Protokol', logTitle: 'Cihaz mesaj akışı'
+    revenueLabel: 'Bugünkü değer', energyNote: 'kWh', protocol: 'Protokol', logTitle: 'Cihaz mesaj akışı', lossLabel: 'Kayıp gelir'
   };
   SK.T = k => (SK.company && SK.company.terms && SK.company.terms[k]) || TERMS[k] || k;
+
+  // Platformun ortak sınıflandırması: bütün şirket paketleri aynı risk ve senaryo kategorilerini kullanır.
+  // Burada durur ki bir şirketin paketi sunucudan gelmese de (yetkisiz kullanıcı) diğer şirketin ekranları çalışsın.
+  SK.riskCats = ['Siber', 'Tedarikçi', 'Fiziksel', 'İnsan', 'Operasyonel', 'Mevzuat', 'Doğal afet', 'Finansal'];
+  SK.scenarioCats = ['Siber', 'Fiziksel', 'Çevresel', 'Tedarikçi', 'İnsan ve süreç'];
 
   // Bağlantı durumu: 'sim' (yerel simülasyon), 'canli' (Miselyum Kapısı üzerinden canlı veri), 'kopuk'
   SK.link = { mode: 'sim', devices: 0, last: null };

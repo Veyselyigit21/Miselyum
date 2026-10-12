@@ -51,7 +51,7 @@
     const hours = imp.hours * mult(imp.mods, enabled);
     const lines = [];
     const rev = affected.reduce((a, c) => a + c.expDailyRev / 24, 0) * hours;
-    if (rev > 0) lines.push({ label: 'Kayıp şarj geliri (' + affected.length + ' soket × ' + SK.fmt.n1(hours) + ' saat)', amount: rev });
+    if (rev > 0) lines.push({ label: SK.T('lossLabel') + ' (' + affected.length + ' ' + SK.T('endpoint') + ' × ' + SK.fmt.n1(hours) + ' saat)', amount: rev });
     imp.costs.forEach(c => {
       const base = c.pct ? SK.twin.econ.annualRevenue * c.pct : c.amount;
       lines.push({ label: c.label, amount: base * mult(c.mods, enabled) });

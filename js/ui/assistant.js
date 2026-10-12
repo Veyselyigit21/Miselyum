@@ -395,7 +395,12 @@
       if (s) cands.push({ s: s + (navWord ? 2 : 0) + (want(q, ['ne ise yarar', 'nasil kullan', 'ne gosterir']) ? 1.5 : 0) - (defWord ? 1 : 0), a: () => navWord ? Object.assign(explainAnswer(v), { autoGo: v }) : explainAnswer(v) });
     });
     // Kavramlar
-    TERMS.forEach(term => { const s = hits(q, term.kw); if (s) cands.push({ s: s + (defWord ? 2 : 0) + 0.3, a: () => termAnswer(term) }); });
+    // Şarj ağına ve Akımyolu'nun rakamlarına özgü kayıtlar başka şirkette kullanılmaz (şirketler arası ayrım)
+    const ozgu = /Akımyolu|soket|şarj|OCPP|OCPI|OCMF|EPDK|Faz [12]|\d+ (risk|kontrol)|mn TL|bin TL/;
+    TERMS.forEach(term => {
+      if (SK.tenantId !== 'akimyolu' && ozgu.test(term.t)) return;
+      const s = hits(q, term.kw); if (s) cands.push({ s: s + (defWord ? 2 : 0) + 0.3, a: () => termAnswer(term) });
+    });
     // Genel niyetler
     INTENTS.forEach(it => { const s = it.score(q); if (s) cands.push({ s, a: it.answer }); });
 
